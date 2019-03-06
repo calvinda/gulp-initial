@@ -1,6 +1,8 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss');
+var customMedia = require('postcss-custom-media');
 
 var paths = {
   cssSource: 'sass/',
@@ -12,13 +14,16 @@ gulp.task('watch', function() {
 });
 
 gulp.task('sass', function() {
-  var processors = [autoprefixer({ browsers: ['last 5 version'] })];
+  var processors = [
+    autoprefixer({ browsers: ['last 5 version'] }),
+    customMedia(),
+  ];
 
   return gulp
     .src('./sass/**/*.scss')
     .pipe(sass().on('error', sass.logError))
-
-    .pipe(gulp.dest('./css'));
+    .pipe(postcss(processors))
+    .pipe(gulp.dest('css'));
 });
 
 gulp.task('default', gulp.parallel('watch', 'sass'));
